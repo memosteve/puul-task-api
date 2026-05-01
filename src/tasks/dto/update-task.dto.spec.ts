@@ -68,6 +68,18 @@ describe('UpdateTaskDto', () => {
       expect(propertyFailed(errors, 'assignedUserIds')).toBe(true);
     });
 
+    it('rejects assignedUserIds with more than 100 ids', async () => {
+      const tooMany = Array.from({ length: 101 }, (_, i) => i + 1);
+      const errors = await validateDto({ assignedUserIds: tooMany });
+      expect(propertyFailed(errors, 'assignedUserIds')).toBe(true);
+    });
+
+    it('accepts assignedUserIds with exactly 100 ids', async () => {
+      const justRight = Array.from({ length: 100 }, (_, i) => i + 1);
+      const errors = await validateDto({ assignedUserIds: justRight });
+      expect(propertyFailed(errors, 'assignedUserIds')).toBe(false);
+    });
+
     it('accepts a valid full payload', async () => {
       const errors = await validateDto({
         title: 'Updated',

@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsArray,
   ArrayMinSize,
+  ArrayMaxSize,
   ArrayUnique,
   Min,
   MaxLength,
@@ -38,6 +39,7 @@ export class CreateTaskDto {
 
   @IsArray()
   @ArrayMinSize(1, { message: 'At least one user must be assigned' })
+  @ArrayMaxSize(100, { message: 'No more than 100 users can be assigned' })
   @ArrayUnique({ message: 'assignedUserIds must not contain duplicates' })
   @IsInt({ each: true, message: 'Each assignedUserId must be an integer' })
   @Min(1, {
