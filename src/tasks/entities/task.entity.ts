@@ -70,9 +70,7 @@ export class Task {
   })
   actualHours: number | null;
 
-  @ManyToMany(() => User, (user) => user.tasks, {
-    cascade: true,
-  })
+  @ManyToMany(() => User, (user) => user.tasks)
   @JoinTable({
     name: 'user_tasks',
     joinColumn: { name: 'task_id', referencedColumnName: 'id' },
