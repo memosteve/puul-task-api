@@ -15,7 +15,7 @@ REST API for team task management, built as part of the Puul Backend Engineer te
 
 ## Prerequisites
 
-- Node.js v20.11 or higher
+- Node.js v20.11 or higher. Recommended via nvm: `nvm install 20 && nvm use 20`
 - Docker & Docker Compose
 
 ## Quick Start
@@ -82,10 +82,12 @@ Create a task assigned to one or more users.
 }
 ```
 
+`actualHours` is optional and can be sent on create or update. It is mainly used when marking a task as `completed`.
+
 `estimatedHours` and `actualHours` use decimal hours. Example: `8.5` = 8h 30min.
 
 ### GET /tasks
-List tasks ordered by creation date (newest first). All filters are combinable with AND logic.
+List tasks ordered by creation date (newest first). This is also the filtering endpoint; all filters are combinable with AND logic.
 
 **Query params:** `dueDate`, `title`, `status`, `assignedUserId`, `assignedUserName`, `assignedUserEmail`
 
@@ -130,16 +132,14 @@ Returns two metrics:
 
 ## Rate Limiting
 
-All endpoints are protected by a global IP-based rate limit.
-
-Default configuration:
+All endpoints use a global IP-based rate limit.
 
 ```env
 THROTTLE_TTL_MS=60000
 THROTTLE_LIMIT=60
 ```
 
-This allows 60 requests per 60 seconds per IP.
+Default: 60 requests per 60 seconds per IP.
 
 ---
 
@@ -162,11 +162,11 @@ npm run format       # Prettier
 
 ## Testing
 
-The project ships with two layers of tests, run with Jest:
+The project includes unit and E2E tests, both run with Jest.
 
 ### Unit tests (`npm test`)
 
-Test services, DTO validation rules, and utilities in isolation — no database required.
+Validate services, DTO rules, and utilities in isolation. No database is required.
 
 | Suite | Coverage |
 |-------|----------|
@@ -182,16 +182,9 @@ Test services, DTO validation rules, and utilities in isolation — no database 
 
 ### E2E tests (`npm run test:e2e`)
 
-Boot the full Nest application against the dev database and exercise every endpoint via HTTP. Each run uses a unique `runId` (timestamp) for emails and titles, so tests are repeatable without manual cleanup. Fixtures created during a run are cleaned up in `afterAll`.
+Boot the full Nest application against PostgreSQL and exercise every endpoint through HTTP. Each run uses a unique `runId` for emails and titles, then cleans up its fixtures in `afterAll`.
 
 Throttling is disabled in E2E by setting `THROTTLE_LIMIT=1000` in the test bootstrap to avoid 429 responses.
-
-### Test pyramid
-
-- **Unit tests** — fast, no I/O, validate service logic and edge cases in isolation.
-- **E2E tests** — slower, full stack, validate that controllers, validation pipes, filters, and the database all play together.
-
-The two layers are independent — unit tests don't reference E2E tests and vice versa.
 
 ---
 
@@ -230,7 +223,7 @@ Filters in `GET /tasks` are applied with conditional `andWhere()`, allowing any 
 
 ### Analytics Metrics
 - **Productivity by Role:** Compares admins vs members on task completion rate, workload, and cost generated. Gives the `role` field business value beyond storage — useful to verify whether role assignments reflect actual responsibilities.
-- **Time Efficiency:** Estimated hours vs actual hours invested (`actualHours` field) for completed tasks. Users can report `actualHours` via `PATCH /tasks/:id`, enabling accurate time tracking rather than approximating with timestamps.
+- **Time Efficiency:** Estimated hours vs actual hours invested (`actualHours` field) for completed tasks. Users can report `actualHours` via `PATCH /tasks/:id`, enabling accurate time tracking rather than approximating with timestamps. This value is stored explicitly because `updatedAt - createdAt` can be biased by later edits, reassignments, or metadata changes after a task is completed.
 
 ---
 
