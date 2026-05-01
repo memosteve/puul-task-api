@@ -251,20 +251,10 @@ updated_at                       status (enum)
                                  updated_at
 ```
 
----
-
-## Production Considerations
-
-- JWT authentication and guards
-- Cursor-based pagination for large datasets
-- Structured logging with Winston or Pino
-- TypeORM migrations instead of `synchronize: true`
-- Health checks with `@nestjs/terminus`
-- CI/CD pipeline with GitHub Actions
 
 ---
 
 ## Author
 
-**Steve**
+**Steve Albo**
 Backend Engineer Challenge — Puul
