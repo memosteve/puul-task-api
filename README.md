@@ -149,7 +149,7 @@ This allows 60 requests per 60 seconds per IP.
 npm run start:dev    # Development mode with hot-reload
 npm run build        # Compile TypeScript
 npm run start:prod   # Production (requires build first)
-npm run seed         # Seed DB with sample data (5 users, 5 tasks)
+npm run seed         # Seed DB with sample data (5 users, 6 tasks)
 npm run migration:run   # Apply database migrations
 npm run migration:show  # Show migration status
 npm test                # Unit tests
@@ -157,6 +157,38 @@ npm run test:e2e        # End-to-end API tests
 npm run lint         # ESLint
 npm run format       # Prettier
 ```
+
+---
+
+## Testing
+
+The project ships with two layers of tests, run with Jest:
+
+### Unit tests (`npm test`)
+
+Test each service in isolation with mocked TypeORM repositories — no database required.
+
+| Suite | Coverage |
+|-------|----------|
+| `format-hours.util.spec.ts` | Decimal hour formatting (`6.25` → `"6h 15min"`) |
+| `users.service.spec.ts` | User creation success, 409 on duplicate email (PostgreSQL `23505`), error rethrow, `findAll` filter mapping, raw row → DTO transformation |
+| `tasks.service.spec.ts` | Task creation, missing user 404, ordering by `createdAt DESC`, subquery filters, update re-fetch flow, remove with confirmation |
+| `analytics.service.spec.ts` | `productivityByRole` with cost dedup, `completionRate` math, `efficiencyRate > 100` / `< 100` / `null` cases |
+
+### E2E tests (`npm run test:e2e`)
+
+Boot the full Nest application against the dev database and exercise every endpoint via HTTP. Each run uses a unique `runId` (timestamp) for emails and titles, so tests are repeatable without manual cleanup. Fixtures created during a run are cleaned up in `afterAll`.
+
+Throttling is disabled in E2E by setting `THROTTLE_LIMIT=1000` in the test bootstrap to avoid 429 responses.
+
+### Test pyramid
+
+- **Unit tests** — fast, no I/O, validate service logic and edge cases in isolation.
+- **E2E tests** — slower, full stack, validate that controllers, validation pipes, filters, and the database all play together.
+
+The two layers are independent — unit tests don't reference E2E tests and vice versa.
+
+---
 
 ## Docker
 
