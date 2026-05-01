@@ -22,7 +22,7 @@ REST API for team task management, built as part of the Puul Backend Engineer te
 
 ```bash
 # 1. Clone the repository
-git clone <repository-url>
+git clone https://github.com/memosteve/puul-task-api.git
 cd puul-task-api
 
 # 2. Install dependencies
