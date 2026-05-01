@@ -166,7 +166,7 @@ The project ships with two layers of tests, run with Jest:
 
 ### Unit tests (`npm test`)
 
-Test each service in isolation with mocked TypeORM repositories — no database required.
+Test services, DTO validation rules, and utilities in isolation — no database required.
 
 | Suite | Coverage |
 |-------|----------|
@@ -174,6 +174,11 @@ Test each service in isolation with mocked TypeORM repositories — no database 
 | `users.service.spec.ts` | User creation success, 409 on duplicate email (PostgreSQL `23505`), error rethrow, `findAll` filter mapping, raw row → DTO transformation |
 | `tasks.service.spec.ts` | Task creation, missing user 404, ordering by `createdAt DESC`, subquery filters, update re-fetch flow, remove with confirmation |
 | `analytics.service.spec.ts` | `productivityByRole` with cost dedup, `completionRate` math, `efficiencyRate > 100` / `< 100` / `null` cases |
+| `create-user.dto.spec.ts` | Required fields, email format, max lengths, and valid roles |
+| `filter-user.dto.spec.ts` | Optional user filters and role validation |
+| `create-task.dto.spec.ts` | Required fields, numeric bounds, status validation, assigned-user array bounds, and duplicate IDs |
+| `update-task.dto.spec.ts` | Partial update validation, nullable fields, non-nullable field protection, and assigned-user array bounds |
+| `filter-task.dto.spec.ts` | Optional task filters, status validation, date validation, and positive assigned user IDs |
 
 ### E2E tests (`npm run test:e2e`)
 
