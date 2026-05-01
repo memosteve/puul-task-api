@@ -90,6 +90,7 @@ export class AnalyticsService {
       return {
         role: row.role,
         totalUsers: parseInt(row.totalUsers, 10) || 0,
+        totalTasks,
         activeTasks,
         completedTasks,
         completionRate,

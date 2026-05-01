@@ -80,6 +80,16 @@ export class SeedService {
         assignedUsers: [users[1], users[2], users[3]],
       },
       {
+        title: 'Fix critical production bug',
+        description: 'Investigate and resolve memory leak in prod',
+        estimatedHours: 3.0,
+        actualHours: 9.0,
+        dueDate: new Date('2024-04-28'),
+        status: 'completed' as const,
+        cost: 600.0,
+        assignedUsers: [users[2]],
+      },
+      {
         title: 'Configure CI/CD',
         description: 'GitHub Actions pipeline setup',
         estimatedHours: 5.0,
@@ -100,6 +110,16 @@ export class SeedService {
     ]);
 
     this.logger.log(`Created ${tasks.length} tasks`);
+
+    // Set distinct created_at timestamps so GET /tasks order (DESC) is meaningful
+    for (let i = 0; i < tasks.length; i++) {
+      const daysAgo = (tasks.length - i) * 3;
+      await this.taskRepository.query(
+        `UPDATE tasks SET created_at = NOW() - INTERVAL '${daysAgo} days' WHERE id = $1`,
+        [tasks[i].id],
+      );
+    }
+
     this.logger.log('Database seeding completed!');
 
     return { users: users.length, tasks: tasks.length };

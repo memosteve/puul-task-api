@@ -35,6 +35,7 @@ interface TaskResponse {
 interface AnalyticsRoleResponse {
   role: UserRole;
   totalUsers: number;
+  totalTasks: number;
   activeTasks: number;
   completedTasks: number;
   completionRate: number;
