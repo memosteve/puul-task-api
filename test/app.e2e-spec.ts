@@ -475,6 +475,34 @@ describe('API (e2e)', () => {
         .send({ status: 'completed' })
         .expect(404);
     });
+
+    it('returns 400 when sending null on a non-nullable field', async () => {
+      await http()
+        .patch(`/tasks/${taskToPatch.id}`)
+        .send({ title: null })
+        .expect(400);
+
+      await http()
+        .patch(`/tasks/${taskToPatch.id}`)
+        .send({ estimatedHours: null })
+        .expect(400);
+
+      await http()
+        .patch(`/tasks/${taskToPatch.id}`)
+        .send({ assignedUserIds: null })
+        .expect(400);
+    });
+
+    it('accepts null on nullable fields (clears actualHours)', async () => {
+      const res = await http()
+        .patch(`/tasks/${taskToPatch.id}`)
+        .send({ actualHours: null })
+        .expect(200);
+
+      const body = res.body as TaskResponse;
+      expect(body.actualHours).toBeNull();
+      expect(body.actualHoursFormatted).toBeNull();
+    });
   });
 
   describe('DELETE /tasks/:id', () => {
