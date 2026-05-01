@@ -9,10 +9,13 @@ import {
   ArrayMaxSize,
   ArrayUnique,
   Min,
+  Max,
   MaxLength,
   IsOptional,
   ValidateIf,
 } from 'class-validator';
+
+const MAX_NUMERIC_10_2 = 99999999.99;
 
 // Skips validators only when the field is undefined.
 // null still reaches @IsString/@IsNumber/etc. and fails — so non-nullable
@@ -34,6 +37,7 @@ export class UpdateTaskDto {
   @IfDefined()
   @IsNumber()
   @Min(0)
+  @Max(MAX_NUMERIC_10_2)
   estimatedHours?: number;
 
   @IfDefined()
@@ -61,11 +65,13 @@ export class UpdateTaskDto {
   @IfDefined()
   @IsNumber()
   @Min(0)
+  @Max(MAX_NUMERIC_10_2)
   cost?: number;
 
   // actualHours IS nullable in the DB; null means "clear the actual hours"
   @IsOptional()
   @IsNumber()
   @Min(0)
+  @Max(MAX_NUMERIC_10_2)
   actualHours?: number | null;
 }

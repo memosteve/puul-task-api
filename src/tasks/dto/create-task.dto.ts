@@ -10,9 +10,12 @@ import {
   ArrayMaxSize,
   ArrayUnique,
   Min,
+  Max,
   MaxLength,
   IsOptional,
 } from 'class-validator';
+
+const MAX_NUMERIC_10_2 = 99999999.99;
 
 export class CreateTaskDto {
   @IsString()
@@ -27,6 +30,7 @@ export class CreateTaskDto {
 
   @IsNumber()
   @Min(0)
+  @Max(MAX_NUMERIC_10_2)
   estimatedHours: number;
 
   @IsDateString()
@@ -50,10 +54,12 @@ export class CreateTaskDto {
 
   @IsNumber()
   @Min(0)
+  @Max(MAX_NUMERIC_10_2)
   cost: number;
 
   @IsOptional()
   @IsNumber()
   @Min(0)
+  @Max(MAX_NUMERIC_10_2)
   actualHours?: number;
 }

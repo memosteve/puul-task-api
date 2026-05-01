@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsDateString,
   IsInt,
+  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -25,6 +26,7 @@ export class FilterTaskDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   assignedUserId?: number;
 
   @IsOptional()

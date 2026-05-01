@@ -74,6 +74,28 @@ describe('CreateTaskDto', () => {
       expect(propertyFailed(errors, 'estimatedHours')).toBe(true);
     });
 
+    it.each([
+      ['estimatedHours', 'estimatedHours'],
+      ['cost', 'cost'],
+      ['actualHours', 'actualHours'],
+    ])(
+      'rejects %s exceeding numeric(10,2) max (99,999,999.99)',
+      async (_label, field) => {
+        const errors = await validateDto({ ...validBase, [field]: 100000000 });
+        expect(propertyFailed(errors, field)).toBe(true);
+      },
+    );
+
+    it('accepts numeric fields at the exact maximum 99,999,999.99', async () => {
+      const errors = await validateDto({
+        ...validBase,
+        estimatedHours: 99999999.99,
+        cost: 99999999.99,
+        actualHours: 99999999.99,
+      });
+      expect(errors).toHaveLength(0);
+    });
+
     it('rejects invalid status', async () => {
       const errors = await validateDto({ ...validBase, status: 'pending' });
       expect(propertyFailed(errors, 'status')).toBe(true);

@@ -14,6 +14,7 @@ export class CreateUserDto {
 
   @IsEmail()
   @IsNotEmpty()
+  @MaxLength(255)
   email: string;
 
   @IsEnum(['admin', 'member'], { message: 'role must be admin or member' })

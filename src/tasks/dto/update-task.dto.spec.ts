@@ -58,6 +58,14 @@ describe('UpdateTaskDto', () => {
       expect(propertyFailed(errors, 'estimatedHours')).toBe(true);
     });
 
+    it.each([['estimatedHours'], ['cost'], ['actualHours']])(
+      'rejects %s exceeding numeric(10,2) max (99,999,999.99)',
+      async (field) => {
+        const errors = await validateDto({ [field]: 100000000 });
+        expect(propertyFailed(errors, field)).toBe(true);
+      },
+    );
+
     it('rejects duplicate assignedUserIds', async () => {
       const errors = await validateDto({ assignedUserIds: [1, 1, 2] });
       expect(propertyFailed(errors, 'assignedUserIds')).toBe(true);
